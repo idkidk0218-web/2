@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>이 정보, 올려도 될까? 🕵️‍♂️ (개인정보·저작권 O/X 퀴즈)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base Styling & Typography */
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #fef3c7 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            font-size: 20px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Responsive Text Rules ensure min 20px for core body */
+        .text-body {
+            font-size: max(20px, 1.25rem);
+            line-height: 1.6;
+        }
+
+        .text-title {
+            font-size: max(28px, 1.85rem);
+            line-height: 1.3;
+        }
+
+        .text-subtitle {
+            font-size: max(22px, 1.4rem);
+            line-height: 1.4;
+        }
+
+        /* Bouncy animations & button active states for kids */
+        .btn-bounce {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        .card-shadow {
+            box-shadow: 0 12px 28px -6px rgba(14, 116, 144, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        /* O/X Big Button Styles */
+        .ox-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            font-weight: 800;
+            font-size: 4rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            box-shadow: 0 8px 0px rgba(0,0,0,0.15);
+        }
+
+        .ox-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px rgba(0,0,0,0.15);
+        }
+
+        /* Progress Bar Animation */
+        .progress-fill {
+            transition: width 0.4s ease-out;
+        }
+
+        /* Modal backdrop scrollbar tweak */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-3 sm:p-6 min-h-screen">
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl p-5 sm:p-8 card-shadow border-4 border-sky-200 relative overflow-hidden">
+        
+        <!-- TOP HEADER & APPS SCRIPT CONFIG TOOL (For Teachers) -->
+        <header class="flex justify-between items-center pb-4 mb-4 border-b-2 border-dashed border-sky-200">
+            <span class="inline-flex items-center gap-2 bg-sky-100 text-sky-800 font-bold px-4 py-2 rounded-full text-base sm:text-lg">
+                <span>🏫</span> 초등 5학년 디지털 시민교육
+            </span>
+            <button onclick="openConfigModal()" class="text-sm sm:text-base font-bold text-slate-500 hover:text-sky-600 underline flex items-center gap-1 bg-slate-100 px-3 py-1.5 rounded-xl transition">
+                ⚙️ 구글시트 설정
+            </button>
+        </header>
+
+        <!-- ==================== ① START SCREEN ==================== -->
+        <section id="screen-start" class="space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-block text-6xl animate-bounce mb-2">🕵️‍♂️</div>
+                <h1 class="text-title font-extrabold text-sky-900 leading-tight">
+                    이 정보, 올려도 될까?
+                </h1>
+                <p class="text-sky-600 font-bold text-subtitle">
+                    개인정보와 저작권을 지키는 올바른 인터넷 생활 퀴즈
+                </p>
+            </div>
+
+            <!-- 안내 박스 -->
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 sm:p-5 text-body text-amber-900 space-y-2">
+                <div class="font-bold text-amber-800 text-subtitle flex items-center gap-2">
+                    💡 선생님 안내사항
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                    <li>총 <strong>5문항</strong>의 O/X 문제로 구성되어 있어요.</li>
+                    <li>이름, 사진, 전화번호 같은 개인정보는 절대 쓰지 않아요!</li>
+                    <li>자신의 <strong>출석번호</strong>만 정확히 입력해 주세요.</li>
+                </ul>
+            </div>
+
+            <!-- 출석번호 입력 -->
+            <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-5 text-center space-y-3">
+                <label for="student-number" class="block font-extrabold text-sky-900 text-subtitle">
+                    🔢 자신의 출석번호를 입력하세요
+                </label>
+                <div class="flex items-center justify-center gap-3">
+                    <input 
+                        type="number" 
+                        id="student-number" 
+                        min="1" 
+                        max="60" 
+                        placeholder="예: 5" 
+                        class="w-36 text-center text-3xl font-extrabold py-3 px-4 rounded-2xl border-4 border-sky-300 focus:border-sky-500 focus:outline-none bg-white shadow-inner"
+                        onkeydown="if(event.key === 'Enter') startQuiz()"
+                    />
+                    <span class="font-bold text-2xl text-sky-800">번</span>
+                </div>
+                <p id="start-error" class="text-red-500 font-bold text-body hidden">
+                    ⚠️ 1번부터 60번 사이의 출석번호를 입력해 주세요!
+                </p>
+            </div>
+
+            <!-- 시작 버튼 -->
+            <button 
+                onclick="startQuiz()" 
+                class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-2xl py-5 rounded-2xl shadow-lg btn-bounce flex items-center justify-center gap-3 border-b-4 border-emerald-700">
+                🚀 퀴즈 시작하기!
+            </button>
+        </section>
+
+        <!-- ==================== ② QUIZ SCREEN ==================== -->
+        <section id="screen-quiz" class="hidden space-y-6">
+            <!-- Progress Bar -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center font-bold text-sky-800 text-subtitle">
+                    <span id="quiz-progress-text">문제 1 / 5</span>
+                    <span id="quiz-progress-percent" class="text-emerald-600">20% 완료</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-5 p-1 border border-slate-300">
+                    <div id="quiz-progress-bar" class="bg-gradient-to-r from-sky-400 to-emerald-400 h-full rounded-full progress-fill" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-gradient-to-br from-white to-sky-50 border-4 border-sky-300 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm min-h-[220px] flex flex-col justify-center">
+                <div id="question-category" class="inline-block self-start bg-sky-200 text-sky-900 font-bold px-3 py-1 rounded-xl text-lg">
+                    🏷️ 개인정보
+                </div>
+                <p id="question-text" class="text-body font-bold text-slate-800 text-2xl sm:text-3xl leading-snug">
+                    질문 내용이 여기에 들어갑니다.
+                </p>
+            </div>
+
+            <!-- O / X Buttons -->
+            <div class="grid grid-cols-2 gap-4 sm:gap-6 pt-2">
+                <button 
+                    onclick="submitAnswer('O')" 
+                    class="ox-btn bg-emerald-100 border-4 border-emerald-400 text-emerald-700 hover:bg-emerald-200 btn-bounce">
+                    <span>⭕</span>
+                    <span class="text-2xl mt-1">그렇다 (O)</span>
+                </button>
+                <button 
+                    onclick="submitAnswer('X')" 
+                    class="ox-btn bg-rose-100 border-4 border-rose-400 text-rose-700 hover:bg-rose-200 btn-bounce">
+                    <span>❌</span>
+                    <span class="text-2xl mt-1">아니다 (X)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== ③ RESULT SCREEN ==================== -->
+        <section id="screen-result" class="hidden space-y-6">
+            <!-- Score Overview Header -->
+            <div class="text-center bg-gradient-to-r from-sky-100 via-amber-100 to-emerald-100 border-4 border-sky-300 rounded-3xl p-6 space-y-2">
+                <div id="score-emoji" class="text-6xl animate-bounce">🎉</div>
+                <h2 class="text-title font-black text-slate-800">퀴즈 결과</h2>
+                <p class="text-body text-slate-700">
+                    <span id="res-student-num" class="font-extrabold text-sky-800">5</span>번 학생의 최종 점수는?
+                </p>
+                <div class="text-4xl sm:text-5xl font-black text-emerald-600 py-2">
+                    <span id="res-score">100</span>점 <span class="text-2xl text-slate-600">(<span id="res-correct-count">5</span> / 5 문제 정답)</span>
+                </div>
+                <p id="score-feedback" class="font-bold text-sky-900 text-subtitle">
+                    최고예요! 디지털 시민 전문가시네요! 🌟
+                </p>
+            </div>
+
+            <!-- 해설 목록 -->
+            <div class="space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-subtitle flex items-center gap-2">
+                    📝 문항별 정답과 친절한 해설
+                </h3>
+                <div id="explanation-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+                    <!-- Dynamic Items Inject Here -->
+                </div>
+            </div>
+
+            <!-- 제출 데이터 확인 박스 -->
+            <div class="bg-slate-50 border-2 border-slate-300 rounded-2xl p-4 text-slate-700 space-y-2 text-base sm:text-lg">
+                <div class="font-bold text-slate-900 text-body flex items-center gap-2">
+                    📋 선생님께 전송될 응답 내역
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white p-3 rounded-xl border border-slate-200">
+                    <div><strong>출석번호:</strong> <span id="data-num"></span>번</div>
+                    <div><strong>최종점수:</strong> <span id="data-score"></span>점</div>
+                    <div class="sm:col-span-2"><strong>문항별 답:</strong> <span id="data-answers"></span></div>
+                    <div class="sm:col-span-2 text-xs sm:text-sm text-slate-500"><strong>제출시각:</strong> <span id="data-time"></span></div>
+                </div>
+            </div>
+
+            <!-- 제출 상태 안내 메시지 -->
+            <div id="submit-status" class="hidden p-4 rounded-2xl font-bold text-body text-center"></div>
+
+            <!-- 제출 및 재시도 버튼 -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button 
+                    id="btn-submit"
+                    onclick="sendToGoogleSheet()" 
+                    class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-black text-xl py-4 px-6 rounded-2xl shadow-md btn-bounce flex items-center justify-center gap-2 border-b-4 border-sky-700">
+                    📤 Google Sheet로 응답 제출하기
+                </button>
+                <button 
+                    onclick="resetQuiz()" 
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xl py-4 px-6 rounded-2xl shadow-md btn-bounce flex items-center justify-center gap-2">
+                    🔄 다시 풀기
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== GOOGLE APPS SCRIPT CONFIG MODAL ==================== -->
+    <div id="config-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar border-4 border-sky-300">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-subtitle font-black text-slate-800 flex items-center gap-2">
+                    ⚙️ Google Sheet 연동 설정
+                </h3>
+                <button onclick="closeConfigModal()" class="text-2xl text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+            </div>
+
+            <!-- URL 입력 -->
+            <div class="space-y-2">
+                <label class="block font-bold text-slate-800 text-body">
+                    🔗 Google Apps Script Web App URL
+                </label>
+                <input 
+                    type="url" 
+                    id="gas-url-input" 
+                    placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full text-base p-3 border-2 border-slate-300 rounded-xl focus:border-sky-500 focus:outline-none"
+                />
+                <p class="text-xs text-slate-500">
+                    URL을 입력하고 저장하면 학생 제출 응답이 해당 구글 시트에 자동 기록됩니다. 입력하지 않으면 시뮬레이션 모드로 작동합니다.
+                </p>
+            </div>
+
+            <!-- Apps Script 가이드 & 코드 복사 -->
+            <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200 space-y-3">
+                <h4 class="font-bold text-sky-900 text-body flex items-center gap-2">
+                    📖 구글 시트 연결 방법 (Apps Script)
+                </h4>
+                <ol class="list-decimal list-inside text-sm text-slate-700 space-y-1">
+                    <li>새 구글 시트 생성 ➔ <strong>[확장 프로그램]</strong> ➔ <strong>[Apps Script]</strong> 클릭</li>
+                    <li>아래 코드 복사 후 기존 코드를 대체하여 붙여넣기</li>
+                    <li>우측 상단 <strong>[배포]</strong> ➔ <strong>[새 배포]</strong> 클릭</li>
+                    <li>유형 선택: <strong>웹 앱</strong> / 액세스 권한: <strong>모든 사용자(Anyone)</strong> 설정 후 배포</li>
+                    <li>발급된 웹 앱 URL을 위 입력창에 붙여넣기 후 저장!</li>
+                </ol>
+                <div class="relative">
+                    <pre id="gas-code-sample" class="bg-slate-900 text-slate-100 text-xs p-3 rounded-xl overflow-x-auto max-h-40 font-mono">
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // 헤더가 없으면 생성
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['제출시각', '출석번호', '문항1', '문항2', '문항3', '문항4', '문항5', '점수']);
+    }
+    
+    // 응답 저장
+    sheet.appendRow([
+      data.timestamp,
+      data.studentNum,
+      data.answers['Q1'] || '',
+      data.answers['Q2'] || '',
+      data.answers['Q3'] || '',
+      data.answers['Q4'] || '',
+      data.answers['Q5'] || '',
+      data.score
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({result: "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({result: "error", error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
+                    <button 
+                        onclick="copyGasCode()" 
+                        class="absolute top-2 right-2 bg-sky-600 hover:bg-sky-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold">
+                        📋 코드 복사
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="saveGasUrl()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl">
+                    💾 URL 저장하기
+                </button>
+                <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2.5 rounded-xl">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // ==========================================
+        // 1. QUIZ DATA SET (초등 5학년 맞춤형 5문항)
+        // ==========================================
+        const quizData = [
+            {
+                id: 'Q1',
+                category: '🔒 개인정보 보호',
+                question: '친구와 찍은 재미있는 사진을 친구 허락 없이 내 SNS나 블로그에 올려도 된다.',
+                correct: 'X',
+                explanation: '친구의 사진도 소중한 개인정보입니다! 반드시 친구에게 먼저 허락을 받고 올려야 해요.'
+            },
+            {
+                id: 'Q2',
+                category: '🎨 저작권 지키기',
+                question: '인터넷에서 찾은 예쁜 그림이나 폰트를 내 숙제나 발표 자료에 쓸 때는 출처를 밝혀야 한다.',
+                correct: 'O',
+                explanation: '다른 사람이 만든 창작물을 사용할 때는 어디서 가져왔는지 출처를 정확히 써주는 것이 올바른 예의입니다.'
+            },
+            {
+                id: 'Q3',
+                category: '🔒 개인정보 보호',
+                question: '온라인 게임에서 만난 친절한 사람이 내 이름, 학교, 전화번호를 물어보면 알려주어도 괜찮다.',
+                correct: 'X',
+                explanation: '온라인에서 알게 된 사람에게는 이름, 학교, 전화번호 등 개인정보를 절대 알려주면 안 됩니다.'
+            },
+            {
+                id: 'Q4',
+                category: '🎨 저작권 지키기',
+                question: '좋아하는 가수의 노래나 영상을 내 마음대로 유튜브나 SNS에 다시 올리면 안 된다.',
+                correct: 'O',
+                explanation: '가수의 노래나 영상은 저작권법의 보호를 받아요. 저작권자의 허락 없이 함부로 올려선 안 됩니다.'
+            },
+            {
+                id: 'Q5',
+                category: '🔒 개인정보 보호',
+                question: '온라인에 내 얼굴 사진이나 집 주소가 찍힌 사진을 누구에게나 공개로 올리는 것은 위험하다.',
+                correct: 'O',
+                explanation: '집 주소나 위치가 드러나는 사진을 공개적으로 올리면 범죄에 악용될 수 있어 매우 위험해요.'
+            }
+        ];
+
+        // Global State Variables
+        let currentQuestionIndex = 0;
+        let studentNumber = null;
+        let userAnswers = {}; // e.g. { Q1: 'X', Q2: 'O' ... }
+        let score = 0;
+        let gasWebAppUrl = localStorage.getItem('digital_citizenship_gas_url') || '';
+
+        // App Initialization
+        window.onload = function() {
+            if (gasWebAppUrl) {
+                document.getElementById('gas-url-input').value = gasWebAppUrl;
+            }
+        };
+
+        // ==========================================
+        // 2. QUIZ CONTROL FUNCTIONS
+        // ==========================================
+        function startQuiz() {
+            const numInput = document.getElementById('student-number');
+            const val = parseInt(numInput.value, 10);
+            const errorElem = document.getElementById('start-error');
+
+            if (isNaN(val) || val < 1 || val > 60) {
+                errorElem.classList.remove('hidden');
+                numInput.focus();
+                return;
+            }
+
+            errorElem.classList.add('hidden');
+            studentNumber = val;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            score = 0;
+
+            // Switch Screen
+            showScreen('screen-quiz');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentQuestionIndex];
+            const total = quizData.length;
+            const progressPercent = Math.round(((currentQuestionIndex + 1) / total) * 100);
+
+            // Update Progress
+            document.getElementById('quiz-progress-text').innerText = `문제 ${currentQuestionIndex + 1} / ${total}`;
+            document.getElementById('quiz-progress-percent').innerText = `${progressPercent}% 완료`;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+            // Update Content
+            document.getElementById('question-category').innerText = q.category;
+            document.getElementById('question-text').innerText = q.question;
+        }
+
+        function submitAnswer(choice) {
+            const q = quizData[currentQuestionIndex];
+            userAnswers[q.id] = choice;
+
+            if (choice === q.correct) {
+                score += 20; // 5 questions = 100 points
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // ==========================================
+        // 3. RESULTS & EXPLANATION DISPLAY
+        // ==========================================
+        function showResults() {
+            showScreen('screen-result');
+
+            const total = quizData.length;
+            const correctCount = score / 20;
+
+            document.getElementById('res-student-num').innerText = studentNumber;
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-correct-count').innerText = correctCount;
+
+            // Feedback Message Adjustments
+            const feedbackElem = document.getElementById('score-feedback');
+            const emojiElem = document.getElementById('score-emoji');
+            
+            if (score === 100) {
+                emojiElem.innerText = "🏆";
+                feedbackElem.innerText = "완벽해요! 멋진 디지털 시민이에요! 🌟";
+            } else if (score >= 60) {
+                emojiElem.innerText = "👍";
+                feedbackElem.innerText = "잘했어요! 해설을 읽고 모르는 내용을 복습해봐요! 😃";
+            } else {
+                emojiElem.innerText = "💡";
+                feedbackElem.innerText = "다시 한번 풀어보면서 올바른 디지털 예절을 배워보아요! 🌱";
+            }
+
+            // Render Detailed Explanations
+            const expListElem = document.getElementById('explanation-list');
+            expListElem.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const userChoice = userAnswers[q.id];
+                const isCorrect = userChoice === q.correct;
+
+                const itemHtml = `
+                    <div class="p-4 rounded-2xl border-2 ${isCorrect ? 'bg-emerald-50 border-emerald-300' : 'bg-rose-50 border-rose-300'} space-y-2">
+                        <div class="flex items-center justify-between font-bold">
+                            <span class="text-body ${isCorrect ? 'text-emerald-900' : 'text-rose-900'}">
+                                ${idx + 1}. ${q.question}
+                            </span>
+                            <span class="text-2xl">${isCorrect ? '✅' : '❌'}</span>
+                        </div>
+                        <div class="text-base sm:text-lg flex flex-wrap gap-x-4 gap-y-1 font-bold">
+                            <span class="text-slate-600">내 답: <strong class="${isCorrect ? 'text-emerald-700' : 'text-rose-600'}">${userChoice}</strong></span>
+                            <span class="text-slate-800">정답: <strong class="text-emerald-700">${q.correct}</strong></span>
+                        </div>
+                        <p class="text-body text-slate-700 bg-white/80 p-3 rounded-xl border border-slate-200">
+                            💡 <strong>해설:</strong> ${q.explanation}
+                        </p>
+                    </div>
+                `;
+                expListElem.insertAdjacentHTML('beforeend', itemHtml);
+            });
+
+            // Populate Payload Summary Box
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+
+            document.getElementById('data-num').innerText = studentNumber;
+            document.getElementById('data-score').innerText = score;
+            document.getElementById('data-answers').innerText = Object.entries(userAnswers).map(([k, v]) => `${k}:${v}`).join(', ');
+            document.getElementById('data-time').innerText = timeString;
+
+            // Reset submit status message
+            const statusBox = document.getElementById('submit-status');
+            statusBox.classList.add('hidden');
+        }
+
+        // ==========================================
+        // 4. GOOGLE SHEETS SUBMISSION (POST FETCH)
+        // ==========================================
+        async function sendToGoogleSheet() {
+            const statusBox = document.getElementById('submit-status');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            statusBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800', 'bg-amber-100', 'text-amber-800');
+            statusBox.classList.add('bg-amber-100', 'text-amber-800');
+            statusBox.innerText = "⏳ 구글 시트로 응답을 전송 중입니다...";
+            btnSubmit.disabled = true;
+
+            const now = new Date();
+            const payload = {
+                timestamp: now.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+                studentNum: studentNumber,
+                answers: userAnswers,
+                score: score
+            };
+
+            // URL이 등록되지 않은 경우 (시뮬레이션 작동)
+            if (!gasWebAppUrl) {
+                setTimeout(() => {
+                    statusBox.classList.remove('bg-amber-100', 'text-amber-800');
+                    statusBox.classList.add('bg-emerald-100', 'text-emerald-800');
+                    statusBox.innerHTML = "✅ [시뮬레이션] 제출 완료! (구글 시트 URL을 설정하면 실제 시트에 적립됩니다.)";
+                    btnSubmit.disabled = false;
+                }, 800);
+                return;
+            }
+
+            try {
+                // Apps Script POST Fetch
+                const response = await fetch(gasWebAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Apps Script CORS 우회 표준 처리
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                statusBox.classList.remove('bg-amber-100', 'text-amber-800');
+                statusBox.classList.add('bg-emerald-100', 'text-emerald-800');
+                statusBox.innerHTML = "🎉 구글 시트로 응답이 성공적으로 전송되었습니다!";
+            } catch (err) {
+                console.error(err);
+                statusBox.classList.remove('bg-amber-100', 'text-amber-800');
+                statusBox.classList.add('bg-rose-100', 'text-rose-800');
+                statusBox.innerText = "⚠️ 전송 실패! 네트워크 상태나 구글 시트 URL 설정을 확인해 주세요.";
+            } finally {
+                btnSubmit.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // 5. HELPER UTILITIES
+        // ==========================================
+        function showScreen(screenId) {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            document.getElementById('student-number').value = '';
+            showScreen('screen-start');
+        }
+
+        // Modal Helpers
+        function openConfigModal() {
+            document.getElementById('config-modal').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.add('hidden');
+        }
+
+        function saveGasUrl() {
+            const inputVal = document.getElementById('gas-url-input').value.trim();
+            gasWebAppUrl = inputVal;
+            localStorage.setItem('digital_citizenship_gas_url', inputVal);
+            alert('구글 시트 URL 설정이 저장되었습니다!');
+            closeConfigModal();
+        }
+
+        function copyGasCode() {
+            const codeText = document.getElementById('gas-code-sample').innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = codeText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Apps Script 코드가 복사되었습니다! 구글 시트 [Apps Script] 편집기에 붙여넣으세요.');
+        }
+    </script>
+</body>
+</html>
